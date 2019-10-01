@@ -19,4 +19,6 @@ During the project, we are going to:
 6. Compare results with non-boosting models.
 
 ## Team members: 
- * Yuriy Biktairov, Konstantin Sobolev, Nurislam Tursynbek
+ * Yuriy Biktairov
+ * Konstantin Sobolev
+ * Nurislam Tursynbek
