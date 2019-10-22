@@ -7,7 +7,6 @@ The proposal for the project may be found here: https://www.overleaf.com/7769475
 
 
 ## Project goals
-Currently, paper has an official repository: www.github.com/trevorcampbell/ubvi. However, currently algorithm is implemented using Numpy library and not not finished.
 
 During the project, we are going to:
 
