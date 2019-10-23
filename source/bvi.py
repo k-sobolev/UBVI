@@ -33,13 +33,14 @@ class BVI(object):
             # build the next component
             print("Optimizing component " + str(i + 1) + "... ")
             # try:
-            current_param = x0.clone()
-            current_param.requires_grad_()
+            current_param = x0.clone().detach().requires_grad_()
             optimizer = torch.optim.Adam([current_param], lr=self.lr)
             for j in range(self.num_opt_steps):
                 optimizer.zero_grad()
-                self._objective(current_param, j).backward()
+                self._objective(current_param, j).backward(retain_graph=True)
                 optimizer.step()
+
+                # print(current_param)
 
             new_param = current_param
                 
@@ -103,7 +104,8 @@ class BVI(object):
             if (n == 0 or n == self.n_init - 1):
                 if n == 0:
                     print("{:^30}|{:^30}|{:^30}".format('Iteration', 'Best param', 'Best objective'))
-                print("{:^30}|{:^30}|{:^30.3f}".format(n, str(best_param), best_objective))
+                print("{:^30}|{:^30}|{:^30}".format(
+                    n, str(best_param), str(best_objective)))
         if best_param is None:
             # if every single initialization had an infinite objective, just raise an error
             raise ValueError

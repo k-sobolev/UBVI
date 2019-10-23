@@ -96,7 +96,8 @@ class Gaussian(object):
             new_param = torch.cat((mu, log_sigma), dim=0)
         else:
             mus = params[:, :self.d]
-            k = choice(range(i), p=(weights ** 2) / (weights ** 2).sum())
+            probs = ((weights ** 2) / (weights ** 2).sum()).detach().numpy()
+            k = choice(range(i), p=probs)
             
             log_sigmas = params[:, self.d:]
             mu = mus[k,:] + torch.randn(self.d) * torch.sqrt(torch.tensor(inflation, dtype=torch.float32)) * torch.exp(log_sigmas[k, :])

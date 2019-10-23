@@ -5,6 +5,11 @@ from scipy.optimize import nnls
 from bvi import BVI
 
 
+def atleast_2d(tensor):
+    if len(tensor.shape) < 2:
+        return tensor[None, :]
+    return tensor
+
 class UBVI(BVI):
     def __init__(
         self, target_log_pdf, component_dist, n_samples = 100, n_logfg_samples = 100, **kw):
@@ -36,15 +41,17 @@ class UBVI(BVI):
         
         # compute optimal weights via nnls
         if self.params.shape[0] == 1:
-            w = torch.Tensor([1])
+            w = torch.Tensor([1.])
         else:
+            print(self.Z)
+
             Linv = torch.inverse(torch.cholesky(self.Z))
 
             # the opt is invariant to d scale, so normalize to have max 1
             d = torch.exp(self._logfg - self._logfg.max())
-            b = torch.Tensor(nnls(Linv.numpy(), -torch.dot(Linv, d).numpy())[0])
-            lbd = torch.dot(Linv, b + d)
-            w = torch.max(0., torch.dot(Linv.T, lbd / torch.sqrt(((lbd ** 2).sum()))))
+            b = torch.Tensor(nnls(Linv.detach().numpy(), -torch.einsum('ij,j->i', Linv, d).detach().numpy())[0])
+            lbd = torch.einsum('ij,j->i', Linv, b + d)
+            w = torch.max(torch.zeros(1), torch.einsum('ij,j->i', Linv.T, lbd / torch.sqrt(((lbd ** 2).sum()))))
 
         # compute weighted logfg sum
         self._logfgsum = torch.logsumexp(torch.cat(
@@ -77,7 +84,7 @@ class UBVI(BVI):
         else:
             lgh = torch.logsumexp(
                 torch.log(self.weights[self.weights > 0]) +
-                (self.component_dist.log_sqrt_pair_integral(x, self.params))[:, self.weights > 0],
+                atleast_2d(self.component_dist.log_sqrt_pair_integral(x, self.params))[:, self.weights > 0],
                 (0, 1)
             )
         
@@ -86,7 +93,8 @@ class UBVI(BVI):
         lh = 0.5 * self.component_dist.log_pdf(x, h_samples) 
         ln = torch.log(torch.tensor(self.n_samples, dtype=torch.float32))
         lf_num = torch.logsumexp(lf - lh - ln, 0)
-        lg_num = self._logfgsum + lgh 
+        lg_num = self._logfgsum + lgh
+
         log_denom = 0.5 * torch.log(1. - torch.exp(torch.tensor(2 * lgh)))
         if lf_num > lg_num:
             logobj = lf_num - log_denom + torch.log(1. - torch.exp(lg_num - lf_num))
