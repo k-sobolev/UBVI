@@ -74,7 +74,7 @@ class BVI(object):
             error_str, self.error = self._error()
 
             # print out the current error
-            print('Component ' + str(self.params.shape[0]) +':')
+            print('Component ' + str(self.params.shape[0]) + ':')
             print(error_str +': ' + str(self.error))
             print('Params:' + str(self.component_dist.unflatten(self.params)))
             print('Weights: ' + str(self.weights))

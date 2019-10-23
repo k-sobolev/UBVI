@@ -89,11 +89,16 @@ class UBVI(BVI):
             )
         
         h_samples = self.component_dist.generate_samples_for_one_component(x, self.n_samples)
+
         lf = 0.5 * self.target_log_pdf(h_samples)
         lh = 0.5 * self.component_dist.log_pdf(x, h_samples) 
         ln = torch.log(torch.tensor(self.n_samples, dtype=torch.float32))
         lf_num = torch.logsumexp(lf - lh - ln, 0)
         lg_num = self._logfgsum + lgh
+
+        # print(lf)
+        # print(lf_num)
+        # print(lg_num)
 
         log_denom = 0.5 * torch.log(1. - torch.exp(torch.tensor(2 * lgh)))
         if lf_num > lg_num:
