@@ -28,9 +28,15 @@ During the project, we are going to:
 ## How to use
 
 ```
-python test.py
+python test_ubvi.py
 ```
-The resulting graphs will be in the results folder
+```
+python test_bbvi.py
+```
+The resulting graphs will be in the results folder.
+
+```experiment_distributions.ipynb``` - notebook with experiments for report
+
 
 ## 
 
