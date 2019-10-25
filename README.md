@@ -1,12 +1,16 @@
 # Universal Boosting Varitional Inference
 
-This is unofficial Pytorch implementation of Universal Boosting Variational Inference
+This is unofficial Pytorch implementation of Universal Boosting Variational Inference. Based on unfinished author’s implementation on Numpy: https://github.com/trevorcampbell/ubvi
 
 The project is based on the paper: https://arxiv.org/pdf/1906.01235.pdf
 
 The proposal for the project may be found here: https://www.overleaf.com/7769475349bxtstwpmmzsq
 
 The presentation can be found here: https://docs.google.com/presentation/d/1U1OPyvEx97d3yEUld0rSrA6vNYsNDSrqel1fOZjFXjw/edit#slide=id.g641ef2860b_3_192
+
+The project report can be found here:
+https://www.overleaf.com/read/tzntkfphzrds
+
 
 ## Requirements
 
