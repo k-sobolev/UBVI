@@ -41,11 +41,11 @@ The resulting graphs will be in the results folder.
 
 ```experiment_distributions.ipynb``` - notebook with experiments for report
 
-##Cauchy distribution approximation examples
+## Cauchy distribution approximation examples
 
 ![alt text](https://raw.githubusercontent.com/k-sobolev/UBVI/master/pics/cauchi_plots.png)
 
-##Banana distribution approximation examples
+## Banana distribution approximation examples
 
 ![alt text](https://raw.githubusercontent.com/k-sobolev/UBVI/master/pics/Banana.png)
 
