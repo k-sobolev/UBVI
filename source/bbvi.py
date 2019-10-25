@@ -22,7 +22,7 @@ class BBVI(BVI):
         else:
             obj = lambda z, i: self._kl_estimate(self.params, z)
             grd = grad(obj)
-            x = torch.ones(self.params.shape[0])/float(self.params.shape[0])
+            x = torch.ones(self.params.shape[0]) / float(self.params.shape[0])
             return simplex_sgd(x, obj, grd, learning_rate=lambda itr : 0.1/(1+itr), num_iters=self.n_simplex_iters, callback = self._print_perf_w if self.verbose else None)
 
     def _error(self):
@@ -30,15 +30,18 @@ class BBVI(BVI):
     
     def _objective(self, x, itr):
         h_samples = self.component_dist.sample(x, self.n_samples)
-        #compute log target density under samples
+        
+        # compute log target density under samples
         lf = self.logp(h_samples).mean()
-        #compute current log mixture density
+        
+        # compute current log mixture density
         if self.weights.size > 0:
             lg = self.component_dist.logpdf(self.params, h_samples)
             if len(lg.shape) == 1:
-                #need to add a dimension so that each sample corresponds to a row in lg
-                lg = lg[:,np.newaxis] 
-            #lg = logsumexp(lg+np.log(np.maximum(self.weights[-1], 1e-64)), axis=1).mean()
+                # need to add a dimension so that each sample corresponds to a row in lg
+                lg = lg[:, None] 
+            
+            # lg = logsumexp(lg+np.log(np.maximum(self.weights[-1], 1e-64)), axis=1).mean()
             lg = lg[:, self.weights > 0] + torch.log(self.weights[self.weights>0])
             if self.eps:
                 lg = torch.cat((lg, np.log(self.eps)*np.ones((lg.shape[0],1))), 1)
@@ -55,7 +58,7 @@ class BBVI(BVI):
             lg = self.component_dist.logpdf(prms, samples)
             if len(lg.shape)==1:
                 lg = lg[:,np.newaxis]
-            #lg = logsumexp(lg+np.log(np.maximum(wts, 1e-64)), axis=1)
+            # lg = logsumexp(lg+np.log(np.maximum(wts, 1e-64)), axis=1)
             lg = torch.logsumexp(lg[:,wts>0] + torch.log(wts[wts>0]), dim=1)
             lf = self.logp(samples)
             out += wts[k]*(lg.mean()-lf.mean())

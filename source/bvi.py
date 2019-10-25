@@ -64,7 +64,10 @@ class BVI(object):
             # print out the current error
             print('Component ' + str(self.params.shape[0]) + ':')
             print(error_str +': ' + str(self.error.data))
-            print('Params:' + str(self.component_dist.unflatten(self.params).data))
+            print('Params:' + str({
+                name: tensor.data
+                for name, tensor in self.component_dist.unflatten(self.params).items()
+            }))
             print('Weights: ' + str(self.weights.data))
             
         # update self.N to the new # components
@@ -89,9 +92,9 @@ class BVI(object):
             if current_objective < best_objective or best_param is None:
                 best_param = current_param
                 best_objective = current_objective
-            if (n == 0 or n == self.n_init - 1):
-                if n == 0:
-                    print("{:^30}|{:^30}|{:^30}".format('Iteration', 'Best param', 'Best objective'))
+            if n == 0:
+                print("{:^30}|{:^30}|{:^30}".format('Iteration', 'Best param', 'Best objective'))
+            if n == self.n_init - 1:
                 print("{:^30}|{:^30}|{:^30}".format(
                     n, str(best_param.data), str(best_objective.data)))
         if best_param is None:
