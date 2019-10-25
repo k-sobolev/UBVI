@@ -112,6 +112,9 @@ class BVI(object):
         
         # return the initialized result
         return best_param
+    
+    def get_weights(self):
+        return self.weights
 
     def _compute_weights(self):
         raise NotImplementedError
