@@ -32,7 +32,7 @@ class BVI(object):
             
             # build the next component
             print("Optimizing component " + str(i + 1) + "... ")
-            # try:
+
             current_param = x0.clone().detach().requires_grad_()
             optimizer = torch.optim.Adam([current_param], lr=self.lr)
             for j in range(self.num_opt_steps):
@@ -40,16 +40,8 @@ class BVI(object):
                 self._objective(current_param, j).backward(retain_graph=True)
                 optimizer.step()
 
-                # print(current_param)
-
             new_param = current_param
                 
-            #     if not torch.BoolTensor.all(torch.isfinite(new_param)):
-            #         raise
-
-            # except: # bbvi can run into bad degeneracies; if so, just revert to initialization and set weight to 0
-            #     error_flag = True
-            #     new_param = x0
             print("Optimization of component " + str(i + 1) + " complete")
 
             # add it to the matrix of flattened parameters
@@ -60,13 +52,9 @@ class BVI(object):
 
             # compute the new weights and add to the list
             print('Updating weights...')
+
             self.weights_prev = self.weights.clone()
-            # try:
             self.weights = self._compute_weights()
-            #     if not torch.BoolTensor.all(torch.isfinite(self.weights)) or error_flag:
-            #         raise
-            # except: # bbvi can run into bad degeneracies; if so, just throw out the new component
-            #     self.weights = torch.cat((self.weights_prev, 0.), 1)
 
             print('Weight update complete...')
 
@@ -75,14 +63,14 @@ class BVI(object):
 
             # print out the current error
             print('Component ' + str(self.params.shape[0]) + ':')
-            print(error_str +': ' + str(self.error))
-            print('Params:' + str(self.component_dist.unflatten(self.params)))
-            print('Weights: ' + str(self.weights))
+            print(error_str +': ' + str(self.error.data))
+            print('Params:' + str(self.component_dist.unflatten(self.params).data))
+            print('Weights: ' + str(self.weights.data))
             
         # update self.N to the new # components
         self.N = N
 
-        #generate the nicely-formatted output params
+        # generate the nicely-formatted output params
         output = self._get_mixture()
         output['obj'] = self.error
         return output
@@ -105,9 +93,9 @@ class BVI(object):
                 if n == 0:
                     print("{:^30}|{:^30}|{:^30}".format('Iteration', 'Best param', 'Best objective'))
                 print("{:^30}|{:^30}|{:^30}".format(
-                    n, str(best_param), str(best_objective)))
+                    n, str(best_param.data), str(best_objective.data)))
         if best_param is None:
-            # if every single initialization had an infinite objective, just raise an error
+            # if every single initialization had an infinite objective, raise an error
             raise ValueError
         
         # return the initialized result
