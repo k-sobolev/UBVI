@@ -1,4 +1,4 @@
-# Universal Boosting Varitional Inference
+# Universal Boosting Variational Inference
 
 This is unofficial Pytorch implementation of Universal Boosting Variational Inference. Based on unfinished author’s implementation on Numpy: https://github.com/trevorcampbell/ubvi
 
